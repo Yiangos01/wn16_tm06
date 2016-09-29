@@ -21,35 +21,12 @@ public class Client {
 
 		int userId=1;
 		int port = 1000;
-
-
-		Socket cl = new Socket(InetAddress.getByName("localhost"),1000);
-		int request=0;
-		while(request<300){
-			System.out.println("sdadsa");
-			//send HELLO
-			OutputStream os = cl.getOutputStream();
-			OutputStreamWriter osw = new OutputStreamWriter(os);
-			BufferedWriter bw = new BufferedWriter(osw);
-			String message="HELLO "+userId+" "+" "+Ip()+" "+port+"\n";
-			bw.write(message);
-			
-			bw.flush();
-
-			//Get the return message from the server
-			InputStream is = cl.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
-			System.out.println(br.readLine());
-			request++;
-
+		for(int i=0;i<10;i++){
+			new Thread(new userThread(userId,port,Ip())).start();
+			userId++;
 		}
-		cl.close();
+
 	}
-
-
-
-
 	public static String Ip() {
 
 		InetAddress ip;
@@ -65,4 +42,61 @@ public class Client {
 		}
 		return "";
 	}
+
 }
+
+class userThread extends Thread{
+	private int userId,port;
+	private String ip;
+
+	userThread(int id,int port,String ip){
+		this.userId=id;
+		this.port=port;
+		this.ip=ip;
+	}
+
+	public void run(){
+		Socket cl;
+		try {
+			cl = new Socket(InetAddress.getByName("localhost"),1000);
+
+			int request=0;
+			while(request<300){
+
+				//System.out.println(request);
+				//send HELLO
+				OutputStream os = cl.getOutputStream();
+				OutputStreamWriter osw = new OutputStreamWriter(os);
+				BufferedWriter bw = new BufferedWriter(osw);
+				String message="HELLO "+userId+" "+" "+ip+" "+port+"\n";
+				long startTime=System.nanoTime();
+				bw.write(message);
+
+				bw.flush();
+
+				System.out.println(userId);
+				//Get the return message from the server
+				InputStream is = cl.getInputStream();
+				InputStreamReader isr = new InputStreamReader(is);
+				BufferedReader br = new BufferedReader(isr);
+				String test=br.readLine();
+				long endTime=System.nanoTime();
+				double seconds = (double)(endTime -startTime)/ 1000000000.0;
+				System.out.println(seconds+"  "+test.split(" ")[2]);
+				request++;
+			}
+			cl.close();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+	}
+}
+
+
+
