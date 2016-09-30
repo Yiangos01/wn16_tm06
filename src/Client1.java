@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Scanner;
 
-public class Client {
+public class Client1 {
 	//private static Socket socket;
 
 	public static void main(String[] args) throws UnknownHostException, IOException{
