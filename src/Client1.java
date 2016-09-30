@@ -14,16 +14,15 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Scanner;
 
-public class Client {
+public class Client1 {
 	//private static Socket socket;
 
 	public static void main(String[] args) throws UnknownHostException, IOException{
 
 		int userId=1;
-		String serverIp =args[0];
-		int port =Integer.parseInt(args[1]);
+		int port = 1000;
 		for(int i=0;i<10;i++){
-			new Thread(new userThread(userId,port,Ip(),serverIp)).start();
+			new Thread(new userThread(userId,port,Ip())).start();
 			userId++;
 		}
 
@@ -48,42 +47,43 @@ public class Client {
 
 class userThread extends Thread{
 	private int userId,port;
-	private String clientip,serverIp;
+	private String ip;
 
-	userThread(int id,int port,String ip,String serverIp){
+	userThread(int id,int port,String ip){
 		this.userId=id;
 		this.port=port;
-		this.clientip=ip;
-		this.serverIp= serverIp;
+		this.ip=ip;
 	}
 
 	public void run(){
 		Socket cl;
 		try {
-			cl = new Socket(serverIp,1000);
+			cl = new Socket(InetAddress.getByName("localhost"),1000);
 
 			int request=0;
 			while(request<300){
-								
+
+				//System.out.println(request);
 				//send HELLO
 				OutputStream os = cl.getOutputStream();
 				OutputStreamWriter osw = new OutputStreamWriter(os);
 				BufferedWriter bw = new BufferedWriter(osw);
-				String message="HELLO "+clientip+" "+port+" "+userId+"\n";
+				String message="HELLO "+userId+" "+" "+ip+" "+port+"\n";
 				long startTime=System.nanoTime();
 				bw.write(message);
+
 				bw.flush();
 
+				System.out.println(userId);
 				//Get the return message from the server
 				InputStream is = cl.getInputStream();
 				InputStreamReader isr = new InputStreamReader(is);
 				BufferedReader br = new BufferedReader(isr);
-				String returnMessage=br.readLine();
+				String test=br.readLine();
 				long endTime=System.nanoTime();
 				double seconds = (double)(endTime -startTime)/ 1000000000.0;
-				System.out.println("Userid: " + userId+", request: "+request);
-				System.out.println("Latency: "+ seconds+" seconds, size payload: "+returnMessage.split(" ")[2]);
-				request++;	
+				System.out.println(seconds+"  "+test.split(" ")[2]);
+				request++;
 			}
 			cl.close();
 		} catch (UnknownHostException e) {

@@ -10,17 +10,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Server{
+public class Server1{
 
 	public static void main(String[] args) throws IOException{
-		
-		int port = Integer.parseInt(args[0]);
-		ServerSocket servSocket = new ServerSocket(port);
+
+		ServerSocket servSocket = new ServerSocket(1000);
 		while(true){
 		Socket socket = servSocket.accept();
 		new Thread(new response(socket)).start();
 		}
+
+
+
 	}
+
 }
 
 class response extends Thread{
@@ -34,10 +37,11 @@ class response extends Thread{
 	public void run(){
 		int i=0;
 		while(true){
+		
 		InputStream is;
 		try {
-			//Get the requests message from the client
 			is = cSocket.getInputStream();
+
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String message = br.readLine();
@@ -47,13 +51,20 @@ class response extends Thread{
 				System.out.println(i);
 				break;
 			}
-			
 			String responce[]=message.split(" ");
 			OutputStream os = cSocket.getOutputStream();
 			OutputStreamWriter osw = new OutputStreamWriter(os);
 			BufferedWriter bw = new BufferedWriter(osw);
 			int payload =(int)((System.nanoTime()%1700) +300)*1000;
 			char data[]=new char[payload/2];
+			//date.
+			System.out.println(payload/1000+ "-"/*+String.valueOf(data)*/);
+			//String messagePayload = "";
+			/*for(int j=0;j<payload;j++){
+				//messagePayload +="a"; 
+				System.out.print("a");
+			}*/
+			//System.out.println();
 			bw.write("Welcome "+responce[1] +" "+ data.length/1000 +" "+String.valueOf(data)+"\n");
 			bw.flush();
 			i++;
