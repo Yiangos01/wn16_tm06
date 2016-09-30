@@ -60,10 +60,10 @@ class userThread extends Thread{
 	public void run(){
 		Socket cl;
 		try {
-			cl = new Socket(serverIp,1000);
+			cl = new Socket(serverIp,port);
 
-			int request=0;
-			while(request<300){
+			int request=1;
+			while(request<=300){
 								
 				//send HELLO
 				OutputStream os = cl.getOutputStream();
@@ -85,7 +85,8 @@ class userThread extends Thread{
 				System.out.println("Latency: "+ seconds+" seconds, size payload: "+returnMessage.split(" ")[2]);
 				request++;	
 			}
-			cl.close();
+			System.out.println("Socket closed for Client "+userId);
+			//cl.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

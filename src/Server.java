@@ -6,8 +6,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Server{
@@ -16,10 +18,26 @@ public class Server{
 		
 		int port = Integer.parseInt(args[0]);
 		ServerSocket servSocket = new ServerSocket(port);
+		System.out.println(Ip());
 		while(true){
 		Socket socket = servSocket.accept();
 		new Thread(new response(socket)).start();
 		}
+	}
+	public static String Ip() {
+
+		InetAddress ip;
+		try {
+
+			ip = InetAddress.getLocalHost();
+			return ip.getHostAddress();
+
+		} catch (UnknownHostException e) {
+
+			e.printStackTrace();
+
+		}
+		return "";
 	}
 }
 
@@ -75,4 +93,5 @@ class response extends Thread{
 	}
 
 }
+
 
