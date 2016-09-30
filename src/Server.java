@@ -13,16 +13,25 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class Server{
-
+	
 	public static void main(String[] args) throws IOException{
-		
+		int repetitions = Integer.parseInt(args[1]);
+		global g= new global(repetitions);
 		int port = Integer.parseInt(args[0]);
+		int throuput[]=new int[1000];
+		long nowMillis = System.currentTimeMillis();
 		ServerSocket servSocket = new ServerSocket(port);
 		System.out.println(Ip());
 		while(true){
 		Socket socket = servSocket.accept();
-		new Thread(new response(socket)).start();
+		new Thread(new response(socket,g,throuput,nowMillis)).start();
+		for(int i=0;i<throuput.length;i++){
+			System.out.print(throuput[i]);
 		}
+		
+		}
+		
+		
 	}
 	public static String Ip() {
 
@@ -41,17 +50,37 @@ public class Server{
 	}
 }
 
+class global{
+	private int repets;
+	global(int repetitions){
+		this.repets=repetitions;
+	}
+	public boolean reps(){
+		if(this.repets!=0){
+			this.repets--;
+			return true;
+		}
+		else return false;
+	}
+}
+
 class response extends Thread{
 	Socket cSocket;
-	response(Socket cSocket){
+	global g;
+	int[] thr;
+	long mill;
+	response(Socket cSocket,global g,int[] thr,long mill){
 		this.cSocket = cSocket;
+		this.g=g;
+		this.thr=thr;
+		this.mill=mill;
 		System.out.println("Thread start");
 
 	}
 
 	public void run(){
 		int i=0;
-		while(true){
+		while(g.reps()){
 		InputStream is;
 		try {
 			//Get the requests message from the client
@@ -73,6 +102,7 @@ class response extends Thread{
 			int payload =(int)((System.nanoTime()%1700) +300)*1000;
 			char data[]=new char[payload/2];
 			bw.write("Welcome "+responce[1] +" "+ data.length/1000 +" "+String.valueOf(data)+"\n");
+			System.out.println((int)((mill - System.currentTimeMillis()) / 1000));
 			bw.flush();
 			i++;
 		} catch (IOException e) {
@@ -93,5 +123,6 @@ class response extends Thread{
 	}
 
 }
+
 
 

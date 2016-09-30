@@ -22,7 +22,7 @@ public class Client {
 		int userId=1;
 		String serverIp =args[0];
 		int port =Integer.parseInt(args[1]);
-		for(int i=0;i<10;i++){
+		for(int i=0;i<20;i++){
 			new Thread(new userThread(userId,port,Ip(),serverIp)).start();
 			userId++;
 		}
@@ -49,7 +49,7 @@ public class Client {
 class userThread extends Thread{
 	private int userId,port;
 	private String clientip,serverIp;
-
+	private double latency=0;
 	userThread(int id,int port,String ip,String serverIp){
 		this.userId=id;
 		this.port=port;
@@ -81,11 +81,12 @@ class userThread extends Thread{
 				String returnMessage=br.readLine();
 				long endTime=System.nanoTime();
 				double seconds = (double)(endTime -startTime)/ 1000000000.0;
-				System.out.println("Userid: " + userId+", request: "+request);
-				System.out.println("Latency: "+ seconds+" seconds, size payload: "+returnMessage.split(" ")[2]);
+				latency+=seconds;
+				//System.out.println("Userid: " + userId+", request: "+request);
+				//System.out.println("Latency: "+ seconds+" seconds, size payload: "+returnMessage.split(" ")[2]);
 				request++;	
 			}
-			System.out.println("Socket closed for Client "+userId);
+			System.out.println("Socket closed for Client "+userId+" latency "+latency);
 			//cl.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -98,6 +99,7 @@ class userThread extends Thread{
 
 	}
 }
+
 
 
 
