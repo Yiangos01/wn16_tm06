@@ -21,7 +21,7 @@ public class Server{
 		int repetitions = Integer.parseInt(args[1]);
 		global g= new global(repetitions);
 		int port = Integer.parseInt(args[0]);
-		double throuput[]=new double[3];
+		long throuput[]=new long[3];
 		long nowMillis = System.currentTimeMillis();
 		CPUTimer.start();
 		ServerSocket servSocket = new ServerSocket(port);
@@ -72,9 +72,9 @@ class global{
 class response extends Thread{
 	Socket cSocket;
 	global g;
-	double[] thr;
+	long[] thr;
 	long mill;
-	response(Socket cSocket,global g,double[] thr,long mill){
+	response(Socket cSocket,global g,long[] thr,long mill){
 		this.cSocket = cSocket;
 		this.g=g;
 		this.thr=thr;
@@ -83,7 +83,7 @@ class response extends Thread{
 
 	}
 
-	@SuppressWarnings("deprecation")
+
 	public void run(){
 		double throup=0;
 		while(g.reps()){
@@ -119,7 +119,7 @@ class response extends Thread{
 	        // Run the garbage collector
 	        runtime.gc();
 	        // Calculate the used memory
-	        int memory = (int)(runtime.maxMemory() - runtime.freeMemory());
+	        long memory = (long)(runtime.maxMemory() - runtime.freeMemory());
 	        //System.out.println(memory);
 	        thr[1]+=memory;
 	        //System.out.println("Used memory is bytes: " + memory);	
