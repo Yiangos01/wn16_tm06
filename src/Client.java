@@ -5,30 +5,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
-import java.util.Scanner;
+
 
 public class Client {
 	//private static Socket socket;
 
 	public static void main(String[] args) throws UnknownHostException, IOException{
-
-		int userId=1;
+		double[] latencyUser = new double[100];
+		int userId=0;
 		String serverIp =args[0];
 		int port =Integer.parseInt(args[1]);
 		for(int i=0;i<5;i++){
-			new Thread(new userThread(userId,port,Ip(),serverIp)).start();
+			new Thread(new userThread(userId,port,Ip(),serverIp,latencyUser)).start();
 			userId++;
 		}
-
+		
+		
 	}
 	public static String Ip() {
 
@@ -52,11 +47,13 @@ class userThread extends Thread{
 	private int userId,port;
 	private String clientip,serverIp;
 	private double latency=0;
-	userThread(int id,int port,String ip,String serverIp){
+	double[] latencyUser;
+	userThread(int id,int port,String ip,String serverIp, double[] latencyUser){
 		this.userId=id;
 		this.port=port;
 		this.clientip=ip;
 		this.serverIp= serverIp;
+		this.latencyUser=latencyUser;
 	}
 
 	public void run(){
@@ -94,19 +91,28 @@ class userThread extends Thread{
 			OutputStreamWriter osw = new OutputStreamWriter(os);
 			BufferedWriter bw = new BufferedWriter(osw);
 			String message="END\n";
-			long startTime=System.nanoTime();
 			bw.write(message);
 			bw.flush();
-			System.out.println("Socket closed for Client "+userId+" latency "+latency);
+			latencyUser[userId]=latency/300;
+			System.out.println("Socket closed for Client "+userId+" latency "+latency/300);
 			cl.close();
+			
+			double sum=0;
+			for(int i=0;i<5;i++){
+				sum+=latencyUser[i];
+			}
+			double average = sum/5; 
+			System.out.println("average "+ average);
+			
+			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("Socket closed for Client "+userId+" latency "+latency+" for "+request+" request");
 			System.out.println("The server is down ");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			e.printStackTrace();
 			System.out.println("Socket closed for Client "+userId+" latency "+latency+" for "+request+" request");
 			System.out.println("The server is down ");
 		}

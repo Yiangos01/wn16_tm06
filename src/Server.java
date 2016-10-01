@@ -21,15 +21,15 @@ public class Server{
 		int repetitions = Integer.parseInt(args[1]);
 		global g= new global(repetitions);
 		int port = Integer.parseInt(args[0]);
-		int throuput[]=new int[2];
+		double throuput[]=new double[3];
 		long nowMillis = System.currentTimeMillis();
 		CPUTimer.start();
 		ServerSocket servSocket = new ServerSocket(port);
 		System.out.println(Ip());
 		while(g.reps()){
-		Socket socket = servSocket.accept();
-		new Thread(new response(socket,g,throuput,nowMillis)).start();
-		
+		Socket socket = servSocket.accept();  
+		new Thread(new response(socket,g,throuput,System.currentTimeMillis())).start();
+		System.out.println(System.currentTimeMillis());
 		}
 				
 		
@@ -72,9 +72,9 @@ class global{
 class response extends Thread{
 	Socket cSocket;
 	global g;
-	int[] thr;
+	double[] thr;
 	long mill;
-	response(Socket cSocket,global g,int[] thr,long mill){
+	response(Socket cSocket,global g,double[] thr,long mill){
 		this.cSocket = cSocket;
 		this.g=g;
 		this.thr=thr;
@@ -85,9 +85,11 @@ class response extends Thread{
 
 	@SuppressWarnings("deprecation")
 	public void run(){
-		int throup=0;
+		double throup=0;
 		while(g.reps()){
 		InputStream is;
+		double CPU=0;
+		OperatingSystemMXBean operatingSystemMXBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
 		try {
 			//Get the requests message from the client
 			is = cSocket.getInputStream();
@@ -97,10 +99,9 @@ class response extends Thread{
 			//System.out.println(message);
 			if(message.equals("END")){
 				//this.stop();
-				throup=thr[0]/(int)((System.currentTimeMillis()-mill ) / 1000);
-				System.out.println(thr[1]/(throup*(int)(System.currentTimeMillis()-mill)));
-				OperatingSystemMXBean operatingSystemMXBean = (com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean();
-				System.out.println(" CPU: " + operatingSystemMXBean.getSystemCpuLoad());
+				throup=thr[0]/(double)((System.currentTimeMillis()-mill )/1000);
+				System.out.println("memory utilization "+thr[1]/(throup*(int)(System.currentTimeMillis()-mill)));
+				System.out.println(" CPU load: " + thr[2]/(throup*(int)(System.currentTimeMillis()-mill)));
 				System.out.println("Throuput : "+throup);
 				break;
 			}
@@ -119,10 +120,10 @@ class response extends Thread{
 	        runtime.gc();
 	        // Calculate the used memory
 	        int memory = (int)(runtime.maxMemory() - runtime.freeMemory());
-	       //ystem.out.println(memory);
+	        //System.out.println(memory);
 	        thr[1]+=memory;
 	        //System.out.println("Used memory is bytes: " + memory);	
-	        
+	        thr[2]+= operatingSystemMXBean.getSystemCpuLoad();
 			//System.out.println("Throuput : "+throup);
 			//System.out.println("Memory : "+(thr[1]/(throup*(int)(System.currentTimeMillis()-mill))));
 			bw.flush();
@@ -134,15 +135,7 @@ class response extends Thread{
 		
 		
 	}
-	public String toStringByte(Byte[] data){
-		String temp =" ";
-		for(int i=0; i<data.length;i++){
-			temp +=data[i];
-		}
-		System.out.println("forr");
-		return temp;
-	}
-
+	
 }
 class CPUTimer {
     private static long _startTime = 0l;
