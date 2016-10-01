@@ -18,7 +18,7 @@ public class Client {
 		int userId=0;
 		String serverIp =args[0];
 		int port =Integer.parseInt(args[1]);
-		for(int i=0;i<20;i++){
+		for(int i=0;i<15;i++){
 			new Thread(new userThread(userId,port,Ip(),serverIp,latencyUser)).start();
 			userId++;
 		}
@@ -99,10 +99,10 @@ class userThread extends Thread{
 			cl.close();
 			
 			double sum=0;
-			for(int i=0;i<20;i++){
+			for(int i=0;i<15;i++){
 				sum+=latencyUser[i];
 			}
-			double average = sum/20; 
+			double average = sum/15; 
 			System.out.println("average "+ average);
 			
 			
