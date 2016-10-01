@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
@@ -22,7 +24,7 @@ public class Client {
 		int userId=1;
 		String serverIp =args[0];
 		int port =Integer.parseInt(args[1]);
-		for(int i=0;i<20;i++){
+		for(int i=0;i<5;i++){
 			new Thread(new userThread(userId,port,Ip(),serverIp)).start();
 			userId++;
 		}
@@ -59,10 +61,11 @@ class userThread extends Thread{
 
 	public void run(){
 		Socket cl;
+		int request = 0;
 		try {
 			cl = new Socket(serverIp,port);
 
-			int request=1;
+			request=1;
 			while(request<=300){
 								
 				//send HELLO
@@ -73,7 +76,7 @@ class userThread extends Thread{
 				long startTime=System.nanoTime();
 				bw.write(message);
 				bw.flush();
-
+			
 				//Get the return message from the server
 				InputStream is = cl.getInputStream();
 				InputStreamReader isr = new InputStreamReader(is);
@@ -82,23 +85,36 @@ class userThread extends Thread{
 				long endTime=System.nanoTime();
 				double seconds = (double)(endTime -startTime)/ 1000000000.0;
 				latency+=seconds;
+				
 				//System.out.println("Userid: " + userId+", request: "+request);
 				//System.out.println("Latency: "+ seconds+" seconds, size payload: "+returnMessage.split(" ")[2]);
 				request++;	
 			}
+			OutputStream os = cl.getOutputStream();
+			OutputStreamWriter osw = new OutputStreamWriter(os);
+			BufferedWriter bw = new BufferedWriter(osw);
+			String message="END\n";
+			long startTime=System.nanoTime();
+			bw.write(message);
+			bw.flush();
 			System.out.println("Socket closed for Client "+userId+" latency "+latency);
-			//cl.close();
+			cl.close();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Socket closed for Client "+userId+" latency "+latency+" for "+request+" request");
+			System.out.println("The server is down ");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Socket closed for Client "+userId+" latency "+latency+" for "+request+" request");
+			System.out.println("The server is down ");
 		}
 
 
 	}
 }
+
 
 
 
