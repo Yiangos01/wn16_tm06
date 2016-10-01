@@ -21,14 +21,15 @@ public class Server{
 		int repetitions = Integer.parseInt(args[1]);
 		global g= new global(repetitions);
 		int port = Integer.parseInt(args[0]);
-		long throuput[]=new long[3];
+		long throuput[]=new long[2];
+		double cpu[]=new double[1];
 		long nowMillis = System.currentTimeMillis();
 		CPUTimer.start();
 		ServerSocket servSocket = new ServerSocket(port);
 		System.out.println(Ip());
 		while(g.reps()){
 		Socket socket = servSocket.accept();  
-		new Thread(new response(socket,g,throuput,System.currentTimeMillis())).start();
+		new Thread(new response(socket,g,throuput,System.currentTimeMillis(),cpu)).start();
 		System.out.println(System.currentTimeMillis());
 		}
 				
@@ -74,11 +75,13 @@ class response extends Thread{
 	global g;
 	long[] thr;
 	long mill;
-	response(Socket cSocket,global g,long[] thr,long mill){
+	double[] cpu;
+	response(Socket cSocket,global g,long[] thr,long mill,double cpu[]){
 		this.cSocket = cSocket;
 		this.g=g;
 		this.thr=thr;
 		this.mill=mill;
+		this.cpu=cpu;
 		System.out.println("Thread start");
 
 	}
@@ -101,7 +104,7 @@ class response extends Thread{
 				//this.stop();
 				throup=thr[0]/(double)((System.currentTimeMillis()-mill )/1000);
 				System.out.println("memory utilization "+thr[1]/(throup*(int)(System.currentTimeMillis()-mill)));
-				System.out.println(" CPU load: " + thr[2]/(throup*(int)(System.currentTimeMillis()-mill)));
+				System.out.println(" CPU load: " + cpu[0]/(throup*(int)(System.currentTimeMillis()-mill)));
 				System.out.println("Throuput : "+throup);
 				break;
 			}
@@ -123,7 +126,7 @@ class response extends Thread{
 	        //System.out.println(memory);
 	        thr[1]+=memory;
 	        //System.out.println("Used memory is bytes: " + memory);	
-	        thr[2]+= operatingSystemMXBean.getSystemCpuLoad();
+	        cpu[0]+= operatingSystemMXBean.getSystemCpuLoad();
 			//System.out.println("Throuput : "+throup);
 			//System.out.println("Memory : "+(thr[1]/(throup*(int)(System.currentTimeMillis()-mill))));
 			bw.flush();
