@@ -115,7 +115,7 @@ class response extends Thread{
 			BufferedWriter bw = new BufferedWriter(osw);
 			int payload =(int)((System.nanoTime()%1700) +300)*1000;
 			char data[]=new char[payload/2];
-			bw.write("Welcome "+responce[1] +" "+ data.length/1000 +" "+String.valueOf(data)+"\n");
+			bw.write("Welcome "+responce[3] +" "+ data.length/1000 +" "+String.valueOf(data)+"\n");
 			thr[0]+=1;
 			// Get the Java runtime
 	        Runtime runtime = Runtime.getRuntime();
