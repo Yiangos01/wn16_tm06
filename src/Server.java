@@ -30,7 +30,6 @@ public class Server{
 		while(g.reps()){
 		Socket socket = servSocket.accept();  
 		new Thread(new response(socket,g,throuput,System.currentTimeMillis(),cpu)).start();
-		System.out.println(System.currentTimeMillis());
 		}
 				
 		
@@ -82,7 +81,7 @@ class response extends Thread{
 		this.thr=thr;
 		this.mill=mill;
 		this.cpu=cpu;
-		System.out.println("Thread start");
+		System.out.println("User open a Socket");
 
 	}
 
@@ -106,6 +105,7 @@ class response extends Thread{
 				System.out.println("memory utilization "+thr[1]/(throup*(int)(System.currentTimeMillis()-mill)));
 				System.out.println(" CPU load: " + cpu[0]/(throup*(int)(System.currentTimeMillis()-mill)));
 				System.out.println("Throuput : "+throup);
+				cSocket.close();
 				break;
 			}
 			

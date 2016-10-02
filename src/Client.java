@@ -54,6 +54,7 @@ class userThread extends Thread{
 		this.clientip=ip;
 		this.serverIp= serverIp;
 		this.latencyUser=latencyUser;
+		System.out.println("User "+ id + " open a Socket");
 	}
 
 	public void run(){
@@ -79,7 +80,7 @@ class userThread extends Thread{
 				InputStreamReader isr = new InputStreamReader(is);
 				BufferedReader br = new BufferedReader(isr);
 				String returnMessage=br.readLine();
-				System.out.println(returnMessage.split(" ")[0] +" "+ returnMessage.split(" ")[1]);
+				//System.out.println(returnMessage.split(" ")[0] +" "+ returnMessage.split(" ")[1]);
 				long endTime=System.nanoTime();
 				double seconds = (double)(endTime -startTime)/ 1000000000.0;
 				latency+=seconds;

@@ -18,7 +18,7 @@ public class Client {
 		int userId=0;
 		String serverIp =args[0];
 		int port =Integer.parseInt(args[1]);
-		for(int i=0;i<15;i++){
+		for(int i=0;i<20;i++){
 			new Thread(new userThread(userId,port,Ip(),serverIp,latencyUser)).start();
 			userId++;
 		}
@@ -54,6 +54,7 @@ class userThread extends Thread{
 		this.clientip=ip;
 		this.serverIp= serverIp;
 		this.latencyUser=latencyUser;
+		System.out.println("User "+ id + " open a Socket");
 	}
 
 	public void run(){
@@ -79,7 +80,7 @@ class userThread extends Thread{
 				InputStreamReader isr = new InputStreamReader(is);
 				BufferedReader br = new BufferedReader(isr);
 				String returnMessage=br.readLine();
-				System.out.println(returnMessage.split(" ")[0] +" "+ returnMessage.split(" ")[1]);
+				//System.out.println(returnMessage.split(" ")[0] +" "+ returnMessage.split(" ")[1]);
 				long endTime=System.nanoTime();
 				double seconds = (double)(endTime -startTime)/ 1000000000.0;
 				latency+=seconds;
@@ -99,10 +100,10 @@ class userThread extends Thread{
 			cl.close();
 			
 			double sum=0;
-			for(int i=0;i<15;i++){
+			for(int i=0;i<20;i++){
 				sum+=latencyUser[i];
 			}
-			double average = sum/15; 
+			double average = sum/20; 
 			System.out.println("average "+ average);
 			
 			
